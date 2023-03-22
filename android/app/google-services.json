@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1093561816391",
+    "project_id": "chatter-e5b36",
+    "storage_bucket": "chatter-e5b36.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1093561816391:android:14bd38861ed1ed76d9e862",
+        "android_client_info": {
+          "package_name": "ch.wenksi.chatter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1093561816391-fcvi95enr2kn7ti7l1d2rf06i2lc1eu2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABR05enDxOhEwMZTPdZraHAyOkGssniHE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1093561816391-fcvi95enr2kn7ti7l1d2rf06i2lc1eu2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
