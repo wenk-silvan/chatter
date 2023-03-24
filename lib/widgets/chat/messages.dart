@@ -12,8 +12,8 @@ class Messages extends StatelessWidget {
     final _auth = FirebaseAuth.instance;
     return StreamBuilder(
       stream: FirebaseFirestore.instance
-          .collection(FirebaseUtil.collectionChat)
-          .orderBy(FirebaseUtil.attributeCreated, descending: true)
+          .collection(FirebaseUtil.colChat)
+          .orderBy(FirebaseUtil.attrCreated, descending: true)
           .snapshots(),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -35,9 +35,10 @@ class Messages extends StatelessWidget {
 
   Widget listViewItem(String loggedInUserId, dynamic chatDoc) {
     return MessageBubble(
-        message: chatDoc[FirebaseUtil.attributeText],
-        isMe: loggedInUserId == chatDoc[FirebaseUtil.attributeUserId],
-        userName: chatDoc[FirebaseUtil.attributeUserName],
+        message: chatDoc[FirebaseUtil.attrText],
+        isMe: loggedInUserId == chatDoc[FirebaseUtil.attrUserId],
+        userName: chatDoc[FirebaseUtil.attrUserName],
+        userImageUrl: chatDoc[FirebaseUtil.attrImageUrl],
         key: ValueKey(chatDoc.id));
   }
 }

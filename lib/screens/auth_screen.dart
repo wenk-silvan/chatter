@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:chatter/firebase_util.dart';
 import 'package:chatter/widgets/auth/auth_form.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -31,6 +34,7 @@ class _AuthScreenState extends State<AuthScreen> {
       {required String email,
       required String password,
       required String userName,
+      required File? image,
       required BuildContext ctx,
       required FormType type}) async {
     setState(() {
@@ -48,6 +52,7 @@ class _AuthScreenState extends State<AuthScreen> {
             email: email,
             userName: userName,
             password: password,
+            image: image!,
             onFirebaseError: (err) {
               FirebaseUtil.showFirebaseError(err, ctx);
             },
@@ -60,8 +65,7 @@ class _AuthScreenState extends State<AuthScreen> {
     required Function(FirebaseException) onFirebaseError,
   }) async {
     try {
-      await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
     } on FirebaseAuthException catch (err) {
       onFirebaseError(err);
     } catch (err) {
@@ -77,6 +81,7 @@ class _AuthScreenState extends State<AuthScreen> {
     required String email,
     required String userName,
     required String password,
+    required File image,
     required Function(FirebaseException) onFirebaseError,
   }) async {
     try {
@@ -85,13 +90,10 @@ class _AuthScreenState extends State<AuthScreen> {
         password: password,
       );
       if (credential.user != null) {
-        await _store
-            .collection(FirebaseUtil.collectionUsers)
-            .doc(credential.user!.uid)
-            .set({
-          FirebaseUtil.attributeUserName: userName,
-          FirebaseUtil.attributeEmail: email,
-        });
+        final downloadUrl =
+            await _addUserImageToStorage(credential.user!.uid, image);
+        await _addUserDataToStore(
+            credential.user!.uid, userName, email, downloadUrl);
       }
     } on FirebaseAuthException catch (err) {
       onFirebaseError(err);
@@ -102,5 +104,23 @@ class _AuthScreenState extends State<AuthScreen> {
         _isLoading = false;
       });
     }
+  }
+
+  Future<String> _addUserImageToStorage(String uid, File image) async {
+    final ref = FirebaseStorage.instance
+        .ref()
+        .child('chatter/user_image')
+        .child('$uid.jpg');
+    await ref.putFile(image);
+    return await ref.getDownloadURL();
+  }
+
+  Future _addUserDataToStore(
+      String uid, String name, String email, String imageUrl) {
+    return _store.collection(FirebaseUtil.colUsers).doc(uid).set({
+      FirebaseUtil.attrUserName: name,
+      FirebaseUtil.attrEmail: email,
+      FirebaseUtil.attrImageUrl: imageUrl,
+    });
   }
 }

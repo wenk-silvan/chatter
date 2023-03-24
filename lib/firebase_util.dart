@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 
 class FirebaseUtil {
   // Users
-  static const collectionUsers = 'users';
-  static const attributeUserName = 'username';
-  static const attributeEmail = 'email';
+  static const colUsers = 'users';
+  static const attrUserName = 'username';
+  static const attrEmail = 'email';
+  static const attrImageUrl = 'imageUrl';
 
   // Chat
-  static const collectionChat = 'chat';
-  static const attributeText = 'text';
-  static const attributeCreated = 'createdAt';
-  static const attributeUserId = 'userId';
+  static const colChat = 'chat';
+  static const attrText = 'text';
+  static const attrCreated = 'createdAt';
+  static const attrUserId = 'userId';
 
   static showFirebaseError(FirebaseException error, BuildContext ctx) {
     ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(

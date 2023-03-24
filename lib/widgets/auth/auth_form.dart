@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:chatter/widgets/user_image_picker.dart';
 import 'package:flutter/material.dart';
 
 class AuthForm extends StatefulWidget {
@@ -8,6 +11,7 @@ class AuthForm extends StatefulWidget {
     required String email,
     required String password,
     required String userName,
+    required File? image,
     required BuildContext ctx,
     required FormType type,
   }) onSubmit;
@@ -24,6 +28,11 @@ class _AuthFormState extends State<AuthForm> {
   var _userPassword = '';
   var _userName = '';
   var _formType = FormType.login;
+  File? _userImageFile;
+
+  void _onImagePicked(File image) {
+    _userImageFile = image;
+  }
 
   void _toggleFormType() {
     setState(() {
@@ -35,12 +44,22 @@ class _AuthFormState extends State<AuthForm> {
   void _trySubmit() {
     final isValid = _formKey.currentState?.validate() ?? false;
     FocusScope.of(context).unfocus();
+
+    if (_userImageFile == null && _isSignup()) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text('Please pick an image.'),
+        backgroundColor: Theme.of(context).errorColor,
+      ));
+      return;
+    }
+
     if (isValid) {
       _formKey.currentState?.save();
       widget.onSubmit(
         email: _userEmail.trim(),
         password: _userPassword.trim(),
         userName: _userName.trim(),
+        image: _userImageFile,
         ctx: context,
         type: _formType,
       );
@@ -60,8 +79,9 @@ class _AuthFormState extends State<AuthForm> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  if (_isSignup()) UserImagePicker(_onImagePicked),
                   emailFormField(),
-                  if (_formType == FormType.signup) userNameFormField(),
+                  if (_isSignup()) userNameFormField(),
                   passwordFormField(),
                   const SizedBox(height: 12),
                   if (widget.isLoading) const CircularProgressIndicator(),
@@ -130,16 +150,19 @@ class _AuthFormState extends State<AuthForm> {
   Widget loginButton() {
     return FilledButton(
       onPressed: _trySubmit,
-      child: Text(_formType == FormType.login ? 'Login' : 'Signup'),
+      child: Text(_isSignup() ? 'Signup' : 'Login'),
     );
   }
 
   Widget insteadButton() {
     return TextButton(
       onPressed: _toggleFormType,
-      child: Text(_formType == FormType.login
-          ? 'Create an account'
-          : 'I already have an account'),
+      child:
+          Text(_isSignup() ? 'I already have an account' : 'Create an account'),
     );
+  }
+
+  _isSignup() {
+    return _formType == FormType.signup;
   }
 }

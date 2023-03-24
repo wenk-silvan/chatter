@@ -20,15 +20,15 @@ class _NewMessageState extends State<NewMessage> {
     try {
       final currentUser = FirebaseAuth.instance.currentUser!;
       final userData = await _store
-          .collection(FirebaseUtil.collectionUsers)
+          .collection(FirebaseUtil.colUsers)
           .doc(currentUser.uid)
           .get();
       await FirebaseFirestore.instance.collection('chat').add({
-        FirebaseUtil.attributeText: _enteredMessage,
-        FirebaseUtil.attributeCreated: Timestamp.now(),
-        FirebaseUtil.attributeUserId: currentUser.uid,
-        FirebaseUtil.attributeUserName:
-            userData[FirebaseUtil.attributeUserName],
+        FirebaseUtil.attrText: _enteredMessage,
+        FirebaseUtil.attrCreated: Timestamp.now(),
+        FirebaseUtil.attrUserId: currentUser.uid,
+        FirebaseUtil.attrUserName: userData[FirebaseUtil.attrUserName],
+        FirebaseUtil.attrImageUrl: userData[FirebaseUtil.attrImageUrl],
       });
       _controller.clear();
     } on FirebaseException catch (err) {
