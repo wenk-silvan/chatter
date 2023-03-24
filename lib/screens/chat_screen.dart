@@ -1,4 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:chatter/widgets/chat/messages.dart';
+import 'package:chatter/widgets/chat/new_message.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -8,33 +9,12 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: appBar(context),
-        body: StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection('chats/jITu5L9ynj7wmJRo2E53/messages')
-                .snapshots(),
-            builder: (ctx, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              final docs = snapshot.data!.docs;
-              return ListView.builder(
-                itemCount: docs.length,
-                itemBuilder: (ctx, index) =>
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      child: Text(docs[index]['text']),
-                    ),
-              );
-            }),
-        floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.add),
-          onPressed: () {
-            FirebaseFirestore.instance
-                .collection('chats/jITu5L9ynj7wmJRo2E53/messages')
-                .add({'text': 'Sample text'});
-          },
-        ));
+      appBar: appBar(context),
+      body: Column(children: const [
+        Expanded(child: Messages()),
+        NewMessage(),
+      ]),
+    );
   }
 
   PreferredSizeWidget appBar(BuildContext ctx) {
@@ -44,12 +24,9 @@ class ChatScreen extends StatelessWidget {
         DropdownButton(
           icon: Icon(
             Icons.more_vert,
-            color: Theme
-                .of(ctx)
-                .primaryIconTheme
-                .color,
+            color: Theme.of(ctx).primaryIconTheme.color,
           ),
-          items: [ _logoutMenuItem() ],
+          items: [_logoutMenuItem()],
           onChanged: (itemIdentifier) {
             if (itemIdentifier == MenuItem.logout) {
               FirebaseAuth.instance.signOut();

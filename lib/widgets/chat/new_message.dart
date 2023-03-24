@@ -1,0 +1,66 @@
+import 'package:chatter/firebase_util.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+
+class NewMessage extends StatefulWidget {
+  const NewMessage({Key? key}) : super(key: key);
+
+  @override
+  State<NewMessage> createState() => _NewMessageState();
+}
+
+class _NewMessageState extends State<NewMessage> {
+  final _controller = TextEditingController();
+  final _store = FirebaseFirestore.instance;
+  var _enteredMessage = '';
+
+  void _sendMessage() async {
+    FocusScope.of(context).unfocus();
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser!;
+      final userData = await _store
+          .collection(FirebaseUtil.collectionUsers)
+          .doc(currentUser.uid)
+          .get();
+      await FirebaseFirestore.instance.collection('chat').add({
+        FirebaseUtil.attributeText: _enteredMessage,
+        FirebaseUtil.attributeCreated: Timestamp.now(),
+        FirebaseUtil.attributeUserId: currentUser.uid,
+        FirebaseUtil.attributeUserName:
+            userData[FirebaseUtil.attributeUserName],
+      });
+      _controller.clear();
+    } on FirebaseException catch (err) {
+      FirebaseUtil.showFirebaseError(err, context);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.all(8),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _controller,
+              decoration: const InputDecoration(labelText: 'Send a message...'),
+              onChanged: (value) {
+                setState(() {
+                  _enteredMessage = value;
+                });
+              },
+            ),
+          ),
+          IconButton(
+            color: Theme.of(context).primaryColor,
+            onPressed: _enteredMessage.trim().isEmpty ? null : _sendMessage,
+            icon: const Icon(Icons.send),
+          )
+        ],
+      ),
+    );
+  }
+}

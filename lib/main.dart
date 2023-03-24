@@ -19,12 +19,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Chatter',
       theme: ThemeData(
-        primarySwatch: Colors.amber,
-        backgroundColor: Colors.amber,
-        accentColor: Colors.brown,
-        accentColorBrightness: Brightness.dark,
+        primarySwatch: Colors.brown,
+        backgroundColor: Colors.brown,
+        accentColor: Colors.amberAccent.shade100,
         buttonTheme: ButtonTheme.of(context).copyWith(
-            buttonColor: Colors.amber,
+            buttonColor: Colors.amberAccent,
             textTheme: ButtonTextTheme.primary,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20))),
