@@ -1,10 +1,34 @@
 import 'package:chatter/widgets/chat/messages.dart';
 import 'package:chatter/widgets/chat/new_message.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
-class ChatScreen extends StatelessWidget {
+class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
+
+  final String pushTopic = 'chat';
+
+  @override
+  State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+  Future<void> setupInteractedMessage() async {
+    FirebaseMessaging.instance.getInitialMessage().then((message) => {
+      if (message != null) print('Initial firebase message: ${message.data}')
+    });
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Foreground firebase message: ${message.data}');
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setupInteractedMessage();
+    FirebaseMessaging.instance.subscribeToTopic(widget.pushTopic);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +46,7 @@ class ChatScreen extends StatelessWidget {
       title: const Text('Chatter'),
       actions: [
         DropdownButton(
+          underline: Container(),
           icon: Icon(
             Icons.more_vert,
             color: Theme.of(ctx).primaryIconTheme.color,

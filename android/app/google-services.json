@@ -29,6 +29,13 @@
             {
               "client_id": "1093561816391-fcvi95enr2kn7ti7l1d2rf06i2lc1eu2.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "1093561816391-t5eede4i0klalfu458apnl7t5ebc3p1g.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "ch.wenksi.chatter"
+              }
             }
           ]
         }

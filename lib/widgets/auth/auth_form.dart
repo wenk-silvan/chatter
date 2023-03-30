@@ -101,6 +101,9 @@ class _AuthFormState extends State<AuthForm> {
   Widget emailFormField() {
     return TextFormField(
       key: const ValueKey('email'),
+      autocorrect: false,
+      textCapitalization: TextCapitalization.none,
+      enableSuggestions: false,
       validator: (value) {
         return value == null || value.isEmpty || !value.contains('@')
             ? 'Please enter a valid email address.'
@@ -119,6 +122,9 @@ class _AuthFormState extends State<AuthForm> {
   Widget userNameFormField() {
     return TextFormField(
       key: const ValueKey('username'),
+      textCapitalization: TextCapitalization.words,
+      enableSuggestions: false,
+      autocorrect: true,
       validator: (value) {
         return value == null || value.isEmpty || value.length < 4
             ? 'Please enter at least 4 characters.'
